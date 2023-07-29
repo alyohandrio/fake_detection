@@ -2,6 +2,7 @@ import torch
 from torch.utils.data import Dataset, DataLoader
 import os
 from tqdm import tqdm
+import argparse
 
 class FeaturesDataset(Dataset):
     def __init__(self, root):
@@ -25,9 +26,15 @@ class FeaturesDataset(Dataset):
 
 
 NUM_EPOCHS = 30
-save_path = os.path.join("checkpoints", "head.pth")
-if not os.path.exists("checkpoints"):
-    os.makedirs("checkpoints")
+
+
+parser = argparse.ArgumentParser()
+parser.add_argument("--out", type=str, default=os.path.join("checkpoints", "head.pth"))
+args = parser.parse_args()
+save_path = args.out
+dir_path = os.sep.join(save_path.split(os.sep)[:-1])
+if not os.path.exists(dir_path):
+    os.makedirs(dir_path)
 
 dataset = FeaturesDataset("features")
 loader = DataLoader(dataset, batch_size=256, shuffle=True)
@@ -47,3 +54,4 @@ for _ in tqdm(range(NUM_EPOCHS)):
         loss.backward()
         optimizer.step()
 torch.save(head.state_dict(), save_path)
+

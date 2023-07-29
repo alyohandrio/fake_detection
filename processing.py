@@ -7,8 +7,10 @@ import torch
 from feature_extraction import ImageDataset
 
 
-def predict_fakes(images_path, head_path="head.pth")
-    head_path = os.path.join("checkpoints", head_pth)
+def predict_fakes(images_path, head_path=None)
+    if head_path is None:
+        head_path = os.path.join("checkpoints", "head.pth")
+    
     weights = ViT_L_16_Weights.IMAGENET1K_V1
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     vit = vit_l_16(weights=weights).to(device)
