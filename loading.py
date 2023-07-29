@@ -24,7 +24,7 @@ number_of_images = 1000
 while processed < number_of_images:
     photos = api.get_entries()
     for photo in photos:
-        urllib.request.urlretrieve(photo.original, os.path.join(images_path, f"{processed}.{photo.extension}"))
+        urllib.request.urlretrieve(photo.medium, os.path.join(images_path, f"{processed}.{photo.extension}"))
         processed += 1
         if processed >= number_of_images:
             break
