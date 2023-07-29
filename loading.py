@@ -1,6 +1,12 @@
 from pexels_api import API
 import os
 import urllib.request
+import argparse
+
+parser = argparse.ArgumentParser()
+parser.add_argument("--query", type=str)
+args = parser.parse_args()
+query = args.query
 
 opener = urllib.request.build_opener()
 opener.addheaders = [('User-Agent', 'Chrome')]
@@ -12,7 +18,7 @@ if not os.path.exists(images_path):
 
 API_KEY = os.environ.get("PEXELS_API_KEY")
 api = API(API_KEY)
-api.search("portrait")
+api.search(query)
 processed = 0
 number_of_images = 1000
 while processed < number_of_images:
