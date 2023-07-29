@@ -16,6 +16,6 @@ pipeline.to(device)
 
 batch_size = 1
 for i in range(0, len(prompts), batch_size):
-    images = pipeline(prompts[i:i + batch_size], num_inference_steps=10)
+    images = pipeline(prompts[i:i + batch_size], num_inference_steps=30)
     for j in range(len(images[0])):
         images[0][j].save(os.path.join(fake_path, f"{i + j}.png"))
