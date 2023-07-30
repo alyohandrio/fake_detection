@@ -25,8 +25,69 @@ class FeaturesDataset(Dataset):
             return torch.load(item_path), 1
 
 
-NUM_EPOCHS = 30
+def training_epoch(model, optimizer, criterion, train_loader):
+    train_loss, train_accuracy = 0.0, 0.0
+    model.train()
+    device = next(model.parameters()).device
+    for features, labels in train_loader:
+        features = features.to(device)
+        labels = labels.to(device)
 
+        optimizer.zero_grad()
+        logits = model(features)
+        loss = criterion(logits, labels)
+        loss.backward()
+        optimizer.step()
+
+        train_loss += loss.item() * features.shape[0]
+        train_accuracy += (logits.argmax(dim=1) == labels).sum().item()
+    
+    train_loss /= len(train_loader.dataset)
+    train_accuracy /= len(train_loader.dataset)
+    return train_loss, train_accuracy
+
+@torch.no_grad()
+def validation_epoch(model, optimizer, criterion, val_loader):
+    val_loss, val_accuracy = 0.0, 0.0
+    model.eval()
+    device = next(model.parameters()).device
+    for features, labels in train_loader:
+        features = features.to(device)
+        labels = labels.to(device)
+
+        logits = model(features)
+        loss = criterion(logits, labels)
+
+        val_loss += loss.item() * features.shape[0]
+        val_accuracy += (logits.argmax(dim=1) == labels).sum().item()
+    
+    val_loss /= len(val_loader.dataset)
+    val_accuracy /= len(val_loader.dataset)
+    return val_loss, val_accuracy
+
+def train(model, optimizer, criterion, num_epochs, train_loader, val_loader=None):
+    train_losses, train_accuracies = [], []
+    val_losses, val_accuracies = [], []
+
+    for _ in range(num_epochs):
+        train_loss, train_accuracy = training_epoch(
+            model, optimizer, criterion, train_loader
+        )
+        train_losses += [train_loss]
+        train_accuracies += [train_accuracy]
+        if val_loader is not None:
+            val_loss, val_accuracy = validation_epoch(
+                model, criterion, val_loader
+            )
+            val_losses += [val_loss]
+            val_accuracies += [val_accuracy]
+    if val_loader is not None:
+        return train_losses, val_losses, train_accuracies, val_accuracies
+    else:
+        return train_losses, val_losses
+
+
+NUM_EPOCHS = 30
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--out", type=str, default=os.path.join("checkpoints", "head.pth"))
@@ -42,16 +103,6 @@ device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 head = torch.nn.Linear(in_features=1000, out_features=2, device=device)
 optimizer = torch.optim.Adam(head.parameters(), lr=0.001)
 criterion = torch.nn.CrossEntropyLoss()
-head.train()
-for _ in tqdm(range(NUM_EPOCHS)):
-    for features, labels in loader:
-        features = features.to(device)
-        labels = labels.to(device)
-
-        optimizer.zero_grad()
-        logits = head(features)
-        loss = criterion(logits, labels)
-        loss.backward()
-        optimizer.step()
+train(head, optimizer, criterion, NUM_EPOCHS, loader)
 torch.save(head.state_dict(), save_path)
 
