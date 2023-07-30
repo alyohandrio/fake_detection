@@ -6,6 +6,7 @@ import argparse
 parser = argparse.ArgumentParser()
 parser.add_argument("--query", type=str)
 parser.add_argument("--n", type=int)
+parser.add_argument("--out", type=str, default="images")
 args = parser.parse_args()
 query = args.query
 number_of_images = args.n
@@ -14,7 +15,7 @@ opener = urllib.request.build_opener()
 opener.addheaders = [('User-Agent', 'Chrome')]
 urllib.request.install_opener(opener)
 
-images_path = os.path.join("images", "0")
+images_path = os.path.join(args.out, "0")
 if not os.path.exists(images_path):
     os.makedirs(images_path)
 

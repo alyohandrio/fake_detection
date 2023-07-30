@@ -4,6 +4,7 @@ import torchvision.transforms as T
 import os
 from torchvision.models import vit_l_16, ViT_L_16_Weights
 import torch
+import argparse
 
 
 class ImageDataset(Dataset):
@@ -39,20 +40,26 @@ def process_images(model, loader, path):
             torch.save(feature, os.path.join(path, f"{saved}.pt"))
             saved += 1
 
+
+parser = argparse.ArgumentParser()
+parser.add_argument("--out", type=str, default="features")
+parser.add_argument("--images", type=str, default="images")
+args = parser.parse_args()
+
 weights = ViT_L_16_Weights.IMAGENET1K_V1
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 vit = vit_l_16(weights=weights).to(device)
 transform = weights.transforms()
 
-real_path = os.path.join("images", "0")
-fake_path = os.path.join("images", "1")
+real_path = os.path.join(args.images, "0")
+fake_path = os.path.join(args.images, "1")
 real_dataset = ImageDataset(real_path, transform)
 fake_dataset = ImageDataset(fake_path, transform)
 real_loader = DataLoader(real_dataset, batch_size=256)
 fake_loader = DataLoader(fake_dataset, batch_size=256)
 
-real_path = os.path.join("features", "0")
-fake_path = os.path.join("features", "1")
+real_path = os.path.join(args.out, "0")
+fake_path = os.path.join(args.out, "1")
 if not os.path.exists(real_path):
     os.makedirs(real_path)
 if not os.path.exists(fake_path):

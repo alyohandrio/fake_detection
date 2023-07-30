@@ -1,12 +1,18 @@
 from diffusers import DiffusionPipeline
 import torch
 import os
+import argparse
 
-fake_path = os.path.join("images", "1")
+parser = argparse.ArgumentParser()
+parser.add_argument("--out", type=str, default="images")
+parser.add_argument("--prompts", type=str, default="prompts.txt")
+args = parser.parse_args()
+
+fake_path = os.path.join(args.out, "1")
 if not os.path.exists(fake_path):
     os.makedirs(fake_path)
 
-prompts_path = "prompts.txt"
+prompts_path = args.prompts
 with open(prompts_path, "r") as f:
     prompts = [line.rstrip() for line in f]
 
