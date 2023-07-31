@@ -33,12 +33,14 @@ class ImageDataset(Dataset):
 def process_images(model, loader, path):
     model.eval()
     saved = 0
+    result = torch.empty((len(loader.dataset), 1000))
     for images in loader:
         images = images.to(device)
         features = model(images)
         for feature in features:
-            torch.save(feature, os.path.join(path, f"{saved}.pt"))
+            result[saved] = feature
             saved += 1
+    torch.save(result, os.path.join(path, "result.pt")
 
 
 parser = argparse.ArgumentParser()

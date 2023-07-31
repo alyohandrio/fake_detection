@@ -8,21 +8,17 @@ class FeaturesDataset(Dataset):
     def __init__(self, root):
         super().__init__()
         self.root = root
-        real_path = os.path.join(root, "0")
-        self.real_names = [name for name in os.listdir(real_path) if os.path.isfile(os.path.join(real_path, name))]
-        fake_path = os.path.join(root, "1")
-        self.fake_names = [name for name in os.listdir(fake_path) if os.path.isfile(os.path.join(fake_path, name))]
+        self.real_features = torch.load(os.path.join(root, "0", "result.pt"))
+        self.fake_features = torch.load(os.path.join(root, "1", "result.pt"))
 
     def __len__(self):
-        return len(self.real_names) + len(self.fake_names)
+        return len(self.real_features) + len(self.fake_features)
 
     def __getitem__(self, idx):
-        if idx < len(self.real_names):
-            item_path = os.path.join(self.root, "0", self.real_names[idx])
-            return torch.load(item_path), 0
+        if idx < len(self.real_features):
+            self.real_features[idx]
         else:
-            item_path = os.path.join(self.root, "1", self.fake_names[-len(self.real_names) + idx])
-            return torch.load(item_path), 1
+            return self.fake_features[-len(self.real_features) + idx]
 
 
 def training_epoch(model, optimizer, criterion, train_loader):
