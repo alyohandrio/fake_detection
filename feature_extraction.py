@@ -40,7 +40,7 @@ def process_images(model, loader, path):
         for feature in features:
             result[saved] = feature
             saved += 1
-    torch.save(result, os.path.join(path, "result.pt")
+    torch.save(result, os.path.join(path, "result.pt"))
 
 
 parser = argparse.ArgumentParser()
