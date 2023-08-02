@@ -1,10 +1,8 @@
-from torch.utils.data import Dataset, DataLoader
-from PIL import Image
-import torchvision.transforms as T
+from torch.utils.data import DataLoader
 import os
 from torchvision.models import vit_l_16, ViT_L_16_Weights
 import torch
-from feature_extraction import ImageDataset
+from utils import ImageDataset
 
 
 def predict_fakes(images_path, head_path=None)

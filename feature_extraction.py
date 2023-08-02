@@ -1,12 +1,9 @@
-from torch.utils.data import Dataset, DataLoader
-import torchvision.transforms as T
+from torch.utils.data import DataLoader
 import os
 from utils import ImageDataset
 from torchvision.models import vit_l_16, ViT_L_16_Weights
 import torch
 import argparse
-
-
 
 
 
