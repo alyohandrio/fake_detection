@@ -1,32 +1,13 @@
 from torch.utils.data import Dataset, DataLoader
-from PIL import Image
 import torchvision.transforms as T
 import os
+from utils import ImageDataset
 from torchvision.models import vit_l_16, ViT_L_16_Weights
 import torch
 import argparse
 
 
-class ImageDataset(Dataset):
-    def __init__(self, root, transform=None):
-        super().__init__()
-        self.root = root
-        if transform is not None:
-            self.transform = transform
-        else:
-            self.transform = T.ToTensor()
-        self.names = [name for name in os.listdir(self.root) if os.path.isfile(os.path.join(self.root, name))]
 
-    def __len__(self):
-        return len(self.names)
-
-    def get_names(self):
-        return self.names
-
-    def __getitem__(self, idx):
-        image_path = os.path.join(self.root, self.names[idx])
-        image = Image.open(image_path).convert('RGB')
-        return self.transform(image)
 
 
 @torch.no_grad()
