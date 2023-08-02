@@ -5,7 +5,7 @@ import torch
 from utils import ImageDataset
 
 
-def predict_fakes(images_path, head_path=None)
+def predict_fakes(images_path, head_path=None):
     if head_path is None:
         head_path = os.path.join("checkpoints", "head.pth")
     
