@@ -10,11 +10,11 @@ parser.add_argument("--train", type=str)
 parser.add_argument("--validation", type=str)
 args = parser.parse_args()
 
-max_iterations = 100000
+max_iterations = 50000
 total_epochs = {}
-best_loss = {}
-horizon = 100
-lrs = np.logspace(-1, -4, 20, base=10)
+best_acc = {}
+horizon = 1000
+lrs = np.logspace(-2, -5, 20, base=10)
 
 train_dataset = FeaturesDataset(args.train)
 val_dataset = FeaturesDataset(args.validation)
@@ -26,17 +26,17 @@ for lr in tqdm(lrs):
     model = torch.nn.Linear(1000, 2, device=device)
     optimizer = torch.optim.Adam(model.parameters(), lr=lr)
     total_epochs[lr] = max_iterations
-    val_losses = []
+    val_accs = []
     for i in range(max_iterations):
-        _, val_loss, _, _ = train(model, optimizer, criterion, 1, train_loader, val_loader)
-        val_loss = val_loss[0]
-        if i >= horizon and val_losses[-horizon] < val_loss:
+        _, _, _, val_acc = train(model, optimizer, criterion, 1, train_loader, val_loader)
+        val_acc = val_acc[0]
+        if i >= horizon and val_accs[-horizon] > val_acc:
             idx = i - horizon
-            total_epochs[lr] = 1 + idx + val_losses[idx:].index(min(val_losses[idx:]))
+            total_epochs[lr] = 1 + idx + val_accs[idx:].index(min(val_accs[idx:]))
             break
-        val_losses += [val_loss]
-    best_loss[lr] = val_losses[total_epochs[lr] - 1]
+        val_accs += [val_acc]
+    best_acc[lr] = val_accs[total_epochs[lr] - 1]
 
-best_lr = sorted(best_loss.items(), key=lambda x: x[1])[0][0]
+best_lr = sorted(best_acc.items(), key=lambda x: x[1])[-1][0]
 print(f"Best learning rate: {best_lr}, {total_epochs[best_lr]} epochs")
 

@@ -6,7 +6,7 @@ from utils import FeaturesDataset, train
 import argparse
 
 
-NUM_EPOCHS = 30
+NUM_EPOCHS = 3000
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--out", type=str, default=os.path.join("checkpoints", "head.pth"))
@@ -21,7 +21,7 @@ dataset = FeaturesDataset(args.features)
 loader = DataLoader(dataset, batch_size=256, shuffle=True)
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 head = torch.nn.Linear(in_features=1000, out_features=2, device=device)
-optimizer = torch.optim.Adam(head.parameters(), lr=0.001)
+optimizer = torch.optim.Adam(head.parameters(), lr=1.4e-5)
 criterion = torch.nn.CrossEntropyLoss()
 train(head, optimizer, criterion, NUM_EPOCHS, loader)
 torch.save(head.state_dict(), save_path)
