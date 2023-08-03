@@ -15,5 +15,5 @@ Usage `python3 feature_extraction.py --images=images --out=out`.
 Script `training.py` trains linear head and saves it in desired location.
 Usage `python3 training.py --features=features --out=out`.
 ## Prediction
-Use function `predict_fakes(images_path, head_path="checkpoints/head.pth")` from `processing.py` to get predictions.
+Use function `predict_fakes(images_path, head_path="checkpoints/head.pth")` from `processing.py` to get predictions. The function returns tensor of predictions and corresponding filenames.
 

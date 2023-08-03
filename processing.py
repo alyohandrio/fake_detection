@@ -31,5 +31,5 @@ def predict_fakes(images_path, head_path=None):
             features = vit(images)
             output = head(features).argmax(dim=1)
             predictions = torch.cat((predictions, output))
-    return predictions
+    return predictions, dataset.get_names()
 
